@@ -1,15 +1,17 @@
 package mmu.edu.my.recyclerview;
 
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.recyclerview.widget.RecyclerView;
-import androidx.recyclerview.widget.LinearLayoutManager;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -34,63 +36,64 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        // RecyclerView = Class && recyclerview = object nameU
-        RecyclerView recyclerview=findViewById(R.id.recyclerView);
-        recyclerview.setLayoutManager(new LinearLayoutManager(this));
+        // RecyclerView = Class && recyclerview = object name
+        RecyclerView recyclerView = findViewById(R.id.recyclerView);
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));
         MyAdapter myAdapter = new MyAdapter();
         myAdapter.addElements(versions);
-        recyclerview.setAdapter(myAdapter);
-//Line above check uppr/lwrcase
+        recyclerView.setAdapter(myAdapter);
     }
-     class MyAdapter extends RecyclerView.Adapter<MyAdapter.MyViewHolder> {
-         ArrayList<Version> elements = new ArrayList<Version>();
-         @NonNull
-         @Override
-         public MyViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-             View rowView = getLayoutInflater().inflate(R.layout.row, parent, false);
-             return new MyViewHolder(rowView);
-          }
 
-         @Override
-         public void onBindViewHolder(@NonNull MyViewHolder holder, int position) {
-             holder.textView.setText(elements.get(position).getName());
-             holder.textView2.setText(elements.get(position).getDescription());
-             holder.imageView.setImageResource(elements.get(position).getIcon());
-             holder.itemView.setOnClickListener(new View.OnClickListener() {
-                 @Override
-                 public void onClick(View view) {
-                     Toast.makeText(MainActivity.this, elements.get(position).getName()+" pressed.", Toast.LENGTH_SHORT).show();
-                 }
-             });
-         }
+    class MyAdapter extends RecyclerView.Adapter<MyAdapter.MyViewHolder>{
+        ArrayList<Version> elements = new ArrayList<Version>();
+        @NonNull
+        @Override
+        public MyAdapter.MyViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+            View rowView = getLayoutInflater().inflate(R.layout.row, parent, false);
+            return new MyViewHolder(rowView);
+        }
 
-         @Override
-         public int getItemCount() {
-             return elements.size();
-         }
+        @Override
+        public void onBindViewHolder(@NonNull MyAdapter.MyViewHolder holder, int position) {
+            holder.textView.setText(elements.get(position).getName());
+            holder.textView2.setText(elements.get(position).getDescription());
+            holder.imageView.setImageResource(elements.get(position).getIcon());
+            holder.textView.setText(elements.get(position).getName());
+            holder.textView2.setText(elements.get(position).getDescription());
+            holder.imageView.setImageResource(elements.get(position).getIcon());
+        }
 
-         public void addElements(Version[] versions) {
-             elements.clear();
-             elements.addAll(Arrays.asList(versions));
-             notifyDataSetChanged();
-         }
+        @Override
+        public int getItemCount() {
+            return elements.size();
+        }
 
-         class MyViewHolder extends RecyclerView.ViewHolder {
-             public TextView textView;
-             public TextView textView2;
-             public ImageView imageView;
-             public MyViewHolder(@NonNull View itemView) {
-                 super(itemView);
-                 textView = itemView.findViewById(R.id.versiontitle);
-                 textView2 = itemView.findViewById(R.id.versionnumber);
-                 imageView = itemView.findViewById(R.id.icon);
-             }
-         }
+        public void addElements(Version[] versions) {
+            elements.clear();
+            elements.addAll(Arrays.asList(versions));
+            notifyDataSetChanged();
+        }
+
+        class MyViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
+            public TextView textView;
+            public TextView textView2;
+            public ImageView imageView;
+
+            public MyViewHolder(@NonNull View itemView){
+                super(itemView);
+                textView = this.itemView.findViewById(R.id.versiontitle);
+                textView2 = this.itemView.findViewById(R.id.versionnumber);
+                imageView = this.itemView.findViewById(R.id.icon);
+                itemView.setOnClickListener(this);
+            }
+
+            @Override
+            public void onClick(View v) {
+                String name = elements.get(getAdapterPosition()).getName();
+                Intent intent = new Intent(MainActivity.this, DetailsActivity.class);
+                intent.putExtra("name", name);
+                startActivity(intent);
+            }
+        }
     }
 }
-
-
-
-
-
-
